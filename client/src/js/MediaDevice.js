@@ -9,20 +9,20 @@ class MediaDevice extends Emitter {
    * Start media devices and send stream
    */
   start() {
-    // const constraints = {
-    //   video: {
-    //     facingMode: 'user',
-    //     height: { min: 360, ideal: 720, max: 1080 }
-    //   },
-    //   audio: true
-    // };
+    const constraints = {
+      video: {
+        facingMode: 'user',
+        height: { min: 360, ideal: 720, max: 1080 }
+      },
+      audio: true
+    };
 
 
     // for PC without video
-    const constraints = {
-      audio: true,
-      video: false
-    };
+    // const constraints = {
+    //   audio: true,
+    //   video: false
+    // };
 
 
     navigator.mediaDevices.enumerateDevices()
