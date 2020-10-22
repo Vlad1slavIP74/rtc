@@ -23,7 +23,7 @@ class PeerConnection extends Emitter {
      * Create a PeerConnection.
      * @param {String} friendID - ID of the friend you want to call.
      */
-  constructor(friendID) {
+  constructor(friendID, myId) {
     super();
     this.pc = new RTCPeerConnection(PC_CONFIG);
     this.pc.onicecandidate = (event) => socket.emit('call', {
@@ -34,6 +34,7 @@ class PeerConnection extends Emitter {
 
     this.mediaDevice = new MediaDevice();
     this.friendID = friendID;
+    this.myId = myId;
   }
 
   /**
@@ -48,7 +49,7 @@ class PeerConnection extends Emitter {
           this.pc.addTrack(track, stream);
         });
         this.emit('localStream', stream);
-        if (isCaller) socket.emit('request', { to: this.friendID });
+        if (isCaller) socket.emit('request', { to: this.friendID, from: this.myId });
         else this.createOffer();
       })
       .start(config);

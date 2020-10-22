@@ -20,7 +20,7 @@ function initSocket(socket) {
 
       const receiver = users.get(data.to);
       if (receiver) {
-        receiver.emit('request', { from: id });
+        receiver.emit('request', { from: data.from || id });
       }
     })
     .on('call', (data) => {

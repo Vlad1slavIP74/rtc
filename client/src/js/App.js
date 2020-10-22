@@ -47,7 +47,8 @@ class App extends Component {
 
   startCall(isCaller, friendID, config) {
     this.config = config;
-    this.pc = new PeerConnection(friendID)
+    const { callFrom } = this.state;
+    this.pc = new PeerConnection(friendID, callFrom)
       .on('localStream', (src) => {
         const newState = { callWindow: 'active', localSrc: src };
         if (!isCaller) newState.callModal = '';
