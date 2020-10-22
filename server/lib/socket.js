@@ -9,6 +9,7 @@ function initSocket(socket) {
   let id;
   socket
     .on('init', async () => {
+       console.log('init', id)
       id = await users.create(socket);
       socket.emit('init', { id });
     })
@@ -21,6 +22,7 @@ function initSocket(socket) {
     .on('call', (data) => {
       const receiver = users.get(data.to);
       if (receiver) {
+        console.log('call',{data})
         receiver.emit('call', { ...data, from: id });
       } else {
         socket.emit('failed');
