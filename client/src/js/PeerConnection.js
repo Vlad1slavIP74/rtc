@@ -28,7 +28,8 @@ class PeerConnection extends Emitter {
     this.pc = new RTCPeerConnection(PC_CONFIG);
     this.pc.onicecandidate = (event) => socket.emit('call', {
       to: this.friendID,
-      candidate: event.candidate
+      candidate: event.candidate,
+      from: this.myId
     });
     this.pc.ontrack = (event) => this.emit('peerStream', event.streams[0]);
 

@@ -27,7 +27,7 @@ function initSocket(socket) {
       const receiver = users.get(data.to);
       if (receiver) {
         console.log('call', { ...data, from: id });
-        receiver.emit('call', { ...data, from: id });
+        receiver.emit('call', { ...data, from: data.from });
       } else {
         socket.emit('failed');
       }
