@@ -49,10 +49,7 @@
     "nodemon": "2.0.4",
     "webpack-dev-server": "3.11.0"
   },
-  "engines": {
-    "node": "12.15.0",
-    "yarn": "1.22.0"
-  },
+ 
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nguymin4/react-videocall.git"
