@@ -51,9 +51,7 @@
   },
  
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nguymin4/react-videocall.git"
+    "type": "git"
   },
-  "author": "Minh Son Nguyen",
   "license": "MIT"
 }
