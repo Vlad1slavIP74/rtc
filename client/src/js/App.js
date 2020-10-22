@@ -27,10 +27,12 @@ class App extends Component {
   componentDidMount() {
     socket
       .on('init', ({ id: clientId }) => {
+        console.log('FROM CLIENT');
         document.title = `${clientId} - VideoCall`;
         this.setState({ clientId });
       })
       .on('request', ({ from: callFrom }) => {
+        console.log(callFrom);
         this.setState({ callModal: 'active', callFrom });
       })
       .on('call', (data) => {
@@ -52,7 +54,7 @@ class App extends Component {
         this.setState(newState);
       })
       .on('peerStream', (src) => this.setState({ peerSrc: src }))
-     
+
       .start(isCaller, config);
   }
 

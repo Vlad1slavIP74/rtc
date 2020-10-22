@@ -26,24 +26,24 @@ class MediaDevice extends Emitter {
 
 
     navigator.mediaDevices.enumerateDevices()
-  .then((info) => {
-    console.log('enumerateDevices',JSON.stringify(info, null, 3))
-  })
-  .catch((errorCallback) => {
-    console.log(errorCallback)
-  });
+      .then((info) => {
+        console.log('enumerateDevices', JSON.stringify(info, null, 3));
+      })
+      .catch((errorCallback) => {
+        console.log(errorCallback);
+      });
 
 
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
         this.stream = stream;
-        console.log(this.stream)
+        console.log(this.stream);
         this.emit('stream', stream);
       })
       .catch((err) => {
         if (err instanceof DOMException) {
-          console.log(err)
+          console.log(err);
           alert('Cannot open webcam and/or microphone');
         } else {
           console.log(err);

@@ -9,13 +9,15 @@ function initSocket(socket) {
   let id;
   socket
     .on('init', async () => {
-      console.log(users.getAll())
+      console.log('from server', users.getAll());
       id = await users.create(socket);
       socket.emit('init', { id });
-      console.log('init', id)
-
+      console.log('init', id);
     })
     .on('request', (data) => {
+      console.log('request', id);
+      console.log('request', { data });
+
       const receiver = users.get(data.to);
       if (receiver) {
         receiver.emit('request', { from: id });
@@ -24,7 +26,7 @@ function initSocket(socket) {
     .on('call', (data) => {
       const receiver = users.get(data.to);
       if (receiver) {
-        console.log('call',{ ...data, from: id })
+        console.log('call', { ...data, from: id });
         receiver.emit('call', { ...data, from: id });
       } else {
         socket.emit('failed');
