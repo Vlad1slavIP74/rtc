@@ -3,19 +3,17 @@ import Emitter from './Emitter';
 import socket from './socket';
 
 const PC_CONFIG = { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun3.l.google.com:19302' },
+  { urls: 'stun:stun4.l.google.com:19302' },
   {
-    url: 'stun:stun.l.google.com:19302'
-  },
-  {
-    url: 'turn:192.158.29.39:3478?transport=tcp',
-    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-    username: '28224511:1379330808'
-  },
-  {
-    url: 'turn:turn.bistri.com:80',
-    credential: 'homeo',
-    username: 'homeo'
+    url: 'turn:3.14.69.99:3478?transport=tcp',
+    credential: 'bmcpassword',
+    username: 'bmc'
   }
+
 ] };
 
 class PeerConnection extends Emitter {
