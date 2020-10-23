@@ -9,9 +9,9 @@ const PC_CONFIG = { iceServers: [
   { urls: 'stun:stun3.l.google.com:19302' },
   { urls: 'stun:stun4.l.google.com:19302' },
   {
-    url: 'turn:3.14.69.99:3478?transport=tcp',
-    credential: 'bmcpassword',
-    username: 'bmc'
+    url: 'turn:numb.viagenie.ca',
+    credential: 'muazkh',
+    username: 'webrtc@live.com'
   }
 
 ] };
