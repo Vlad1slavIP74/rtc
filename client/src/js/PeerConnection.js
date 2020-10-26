@@ -8,10 +8,15 @@ const PC_CONFIG = { iceServers: [
   { urls: 'stun:stun2.l.google.com:19302' },
   { urls: 'stun:stun3.l.google.com:19302' },
   { urls: 'stun:stun4.l.google.com:19302' },
+  // {
+  //   url: 'turn:numb.viagenie.ca',
+  //   credential: 'muazkh',
+  //   username: 'webrtc@live.com'
+  // }, 
   {
-    url: 'turn:numb.viagenie.ca',
-    credential: 'muazkh',
-    username: 'webrtc@live.com'
+    url: 'turn:3.14.69.99:3478',
+    credential: 'bmcpassword',
+    username: 'bmc'
   }
 
 ] };
