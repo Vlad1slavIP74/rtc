@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-function MainWindow({ startCall, clientId }) {
-  const [friendID, setFriendID] = useState(null);
-
+function MainWindow({ startCall, clientId, friendId, setFriendId }) {
   /**
    * Start the call with or without video
    * @param {Boolean} video
    */
   const callWithVideo = (video) => {
     const config = { audio: true, video };
-    return () => friendID && startCall(true, friendID, config);
+    return () => friendId && startCall(true, friendId, config);
   };
 
   return (
@@ -33,7 +31,7 @@ function MainWindow({ startCall, clientId }) {
           className="txt-clientId"
           spellCheck={false}
           placeholder="Your friend ID"
-          onChange={(event) => setFriendID(event.target.value)}
+          onChange={(event) => setFriendId(event.target.value)}
         />
         <div>
           <button
@@ -46,6 +44,11 @@ function MainWindow({ startCall, clientId }) {
             className="btn-action fa fa-phone"
             onClick={callWithVideo(false)}
           />
+          <button
+            type="button"
+            className="btn-action fa fa-comment"
+            onClick={callWithVideo(false)}
+          />
         </div>
       </div>
     </div>
@@ -54,7 +57,9 @@ function MainWindow({ startCall, clientId }) {
 
 MainWindow.propTypes = {
   clientId: PropTypes.string.isRequired,
-  startCall: PropTypes.func.isRequired
+  startCall: PropTypes.func.isRequired,
+  setFriendId: PropTypes.func.isRequired,
+  friendId: PropTypes.string.isRequired
 };
 
 export default MainWindow;

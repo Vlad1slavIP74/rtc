@@ -5,6 +5,7 @@ import PeerConnection from './PeerConnection';
 import MainWindow from './MainWindow';
 import CallWindow from './CallWindow';
 import CallModal from './CallModal';
+import ChatModal from './chat/ChatModal';
 
 class App extends Component {
   constructor() {
@@ -13,15 +14,19 @@ class App extends Component {
       clientId: '',
       callWindow: '',
       callModal: '',
+      isChatOpen: true,
       callFrom: '',
       localSrc: null,
-      peerSrc: null
+      peerSrc: null,
+      friendId: null
     };
     this.pc = {};
     this.config = null;
     this.startCallHandler = this.startCall.bind(this);
     this.endCallHandler = this.endCall.bind(this);
     this.rejectCallHandler = this.rejectCall.bind(this);
+    this.sendMessageHandler = this.sendMessage.bind(this);
+    this.setFriendId = this.setFriendId.bind(this);
   }
 
   componentDidMount() {
@@ -45,6 +50,10 @@ class App extends Component {
       .emit('init');
   }
 
+  setFriendId(friendId) {
+    this.setState({ friendId });
+  }
+
   startCall(isCaller, friendID, config) {
     this.config = config;
     this.pc = new PeerConnection(friendID)
@@ -64,6 +73,12 @@ class App extends Component {
     this.setState({ callModal: '' });
   }
 
+  sendMessage(data) {
+    const { friendId } = this.state;
+    socket.emit('sendMessage', { ...data, to: friendId });
+  }
+
+
   endCall(isStarter) {
     if (_.isFunction(this.pc.stop)) {
       this.pc.stop(isStarter);
@@ -79,12 +94,15 @@ class App extends Component {
   }
 
   render() {
-    const { clientId, callFrom, callModal, callWindow, localSrc, peerSrc } = this.state;
+    const { clientId, callFrom, callModal, callWindow, localSrc, peerSrc,
+      isChatOpen, friendId } = this.state;
     return (
       <div>
         <MainWindow
           clientId={clientId}
           startCall={this.startCallHandler}
+          setFriendId={this.setFriendId}
+          friendId={friendId}
         />
         {!_.isEmpty(this.config) && (
           <CallWindow
@@ -102,6 +120,14 @@ class App extends Component {
           rejectCall={this.rejectCallHandler}
           callFrom={callFrom}
         />
+        {
+          isChatOpen && clientId && (
+            <ChatModal
+              sendMessage={this.sendMessageHandler}
+              clientId={clientId}
+            />
+          )
+        }
       </div>
     );
   }

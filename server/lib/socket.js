@@ -41,6 +41,14 @@ function initSocket(socket) {
     .on('disconnect', () => {
       users.remove(id);
       console.log(id, 'disconnected');
+    })
+    .on('sendMessage', (data) => {
+      const receiver = users.get(data.to);
+      console.log(data);
+      if (receiver) {
+        console.log('MESSAGE', data);
+        receiver.emit('sendMessage', { ...data, from: id });
+      }
     });
 }
 
