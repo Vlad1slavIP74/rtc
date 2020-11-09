@@ -1,17 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 function MainWindow({ startCall, clientId }) {
   const [friendID, setFriendID] = useState(null);
+  const [audioDevices, setAudioDevice] = useState([]);
+  const [videoDevices, setVideoDevice] = useState([]);
+  const [loader, setLoader] = useState(true);
+  const [userAudio, setUserAudio] = useState('NOTHING');
 
   /**
    * Start the call with or without video
    * @param {Boolean} video
    */
   const callWithVideo = (video) => {
+    // { video: { deviceId: myPreferredCameraDeviceId } }
     const config = { audio: true, video };
     return () => friendID && startCall(true, friendID, config);
   };
+
+  /**
+   * Get List available audio device
+   */
+
+  const list = async () => {
+    const listDevices = await navigator.mediaDevices.enumerateDevices();
+
+    const videoDevicesList = listDevices.filter((device) => device.kind === 'videoinput');
+    const audioDevicesList = listDevices.filter((device) => device.kind === 'audioinput');
+    setAudioDevice(audioDevicesList);
+    setVideoDevice(videoDevicesList);
+    setLoader(false);
+  };
+
+  useEffect(() => {
+    if (loader) {
+      list();
+    }
+  }, []);
+
+  if (loader) {
+    return null;
+  }
+
+
+  const getUserAudio = (event) => {
+    console.log(event.target.value);
+    setUserAudio(event.target.value);
+  };
+
+  const getUserVideo = (event) => {
+
+  };
+
+  const videoSelector = videoDevices.length
+    ? (
+      <select
+        style={
+        {
+          color: 'black'
+        }
+      }
+        onChange={(event) => getUserVideo(event)}
+      >
+        {videoDevices.map((item) => <option>{item.label}</option>)}
+      </select>
+    )
+    : null;
+
+  const audioSelector = audioDevices.length
+    ? (
+      <select
+        style={
+        {
+          color: 'black'
+        }
+      }
+        value={userAudio}
+        onChange={(event) => getUserAudio(event)}
+      >
+        {audioDevices.map((item) => <option>{item.label}</option>)}
+      </select>
+    )
+    : null;
+
 
   return (
     <div className="container main-window">
@@ -46,6 +117,8 @@ function MainWindow({ startCall, clientId }) {
             className="btn-action fa fa-phone"
             onClick={callWithVideo(false)}
           />
+          {videoSelector}
+          {audioSelector}
         </div>
       </div>
     </div>

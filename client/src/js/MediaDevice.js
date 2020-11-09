@@ -8,7 +8,8 @@ class MediaDevice extends Emitter {
   /**
    * Start media devices and send stream
    */
-  start() {
+  start(config) {
+    console.log({ config });
     // const constraints = {
     //   video: {
     //     facingMode: 'user',
@@ -29,30 +30,28 @@ class MediaDevice extends Emitter {
       .then((info) => {
         console.log('enumerateDevices', JSON.stringify(info, null, 3));
 
-        const constraints = {}
+        const constraints = {};
 
-        constraints.audio = true
-        constraints.video = !!info.find(deviceInfo => deviceInfo.kind === 'videoinput')
-        
-        console.log(constraints)
-        
+        constraints.audio = true;
+        constraints.video = !!info.find((deviceInfo) => deviceInfo.kind === 'videoinput');
+
+        console.log(constraints);
+
         navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then((stream) => {
-          this.stream = stream;
-          console.log(this.stream);
-          this.emit('stream', stream);
-        })
-        .catch((err) => {
-          if (err instanceof DOMException) {
-            console.log(err);
-            alert('Cannot open webcam and/or microphone');
-          } else {
-            console.log(err);
-          }
-        });
-  
-
+          .getUserMedia(constraints)
+          .then((stream) => {
+            this.stream = stream;
+            console.log(this.stream);
+            this.emit('stream', stream);
+          })
+          .catch((err) => {
+            if (err instanceof DOMException) {
+              console.log(err);
+              alert('Cannot open webcam and/or microphone');
+            } else {
+              console.log(err);
+            }
+          });
       })
       .catch((errorCallback) => {
         console.log(errorCallback);

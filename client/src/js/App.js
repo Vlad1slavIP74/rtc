@@ -5,6 +5,7 @@ import PeerConnection from './PeerConnection';
 import MainWindow from './MainWindow';
 import CallWindow from './CallWindow';
 import CallModal from './CallModal';
+import '@babel/polyfill';
 
 class App extends Component {
   constructor() {
@@ -16,6 +17,8 @@ class App extends Component {
       callFrom: '',
       localSrc: null,
       peerSrc: null
+      // audioDevice: null,
+      // videoDevice: null
     };
     this.pc = {};
     this.config = null;
@@ -78,14 +81,26 @@ class App extends Component {
     });
   }
 
+
   render() {
     const { clientId, callFrom, callModal, callWindow, localSrc, peerSrc } = this.state;
+
     return (
       <div>
         <MainWindow
           clientId={clientId}
           startCall={this.startCallHandler}
         />
+        {/* <div>
+          <select value={this.state.valueFromSelect} onChange={this.handleSelect}>
+            <option value='a'>
+              a
+            </option>
+            <option value='b'>
+              b
+            </option>
+          </select>
+        </div> */}
         {!_.isEmpty(this.config) && (
           <CallWindow
             status={callWindow}

@@ -12,7 +12,7 @@ const PC_CONFIG = { iceServers: [
   //   url: 'turn:numb.viagenie.ca',
   //   credential: 'muazkh',
   //   username: 'webrtc@live.com'
-  // }, 
+  // },
   {
     url: 'turn:3.14.69.99:3478',
     credential: 'bmcpassword',
