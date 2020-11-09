@@ -14,7 +14,7 @@ const PC_CONFIG = { iceServers: [
   //   username: 'webrtc@live.com'
   // },
   {
-    url: 'turn:3.14.69.99:3478',
+    urls: 'turn:3.14.69.99:3478',
     credential: 'bmcpassword',
     username: 'bmc'
   }

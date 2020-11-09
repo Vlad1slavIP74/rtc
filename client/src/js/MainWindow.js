@@ -54,7 +54,7 @@ function MainWindow({ startCall, clientId }) {
 
   const list = async () => {
     const listDevices = await navigator.mediaDevices.enumerateDevices();
-    console.log(JSON.stringify(listDevices, null, 2));
+    console.log('listDevices', JSON.stringify(listDevices, null, 2));
     const videoDevicesList = listDevices.filter((device) => device.kind === 'videoinput');
     const audioDevicesList = listDevices.filter((device) => device.kind === 'audioinput');
 
