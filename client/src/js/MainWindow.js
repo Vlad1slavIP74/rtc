@@ -1,20 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+
+function getConfig({ userAudio, userVideo, audioDevices, videoDevices, video }) {
+  // for keys where user did not select nothing
+  if (!userAudio && !userVideo) {
+    return {
+      audio: true,
+      video
+    };
+  }
+  console.log(555, videoDevices);
+  const videoObj = videoDevices.find((obj) => obj.label === userVideo);
+  const audioObj = audioDevices.find((obj) => obj.label === userAudio);
+  return {
+    audio: userAudio ? {
+      deviceId: audioObj ? audioObj.deviceId : undefined
+    } : true,
+    video: video ? {
+      deviceId: videoObj ? videoObj.deviceId : undefined,
+      facingMode: 'user',
+      height: { min: 360, ideal: 720, max: 1080 }
+    } : video
+  };
+}
+
 function MainWindow({ startCall, clientId }) {
   const [friendID, setFriendID] = useState(null);
   const [audioDevices, setAudioDevice] = useState([]);
   const [videoDevices, setVideoDevice] = useState([]);
-  const [loader, setLoader] = useState(true);
-  const [userAudio, setUserAudio] = useState('NOTHING');
 
+  const [loader, setLoader] = useState(true);
+
+  const [userAudio, setUserAudio] = useState(null);
+  const [userVideo, setUserVideo] = useState(null);
   /**
    * Start the call with or without video
    * @param {Boolean} video
    */
   const callWithVideo = (video) => {
     // { video: { deviceId: myPreferredCameraDeviceId } }
-    const config = { audio: true, video };
+
+    console.log('MainWindow', { userAudio, userVideo });
+
+
+    const config = getConfig({ userAudio, userVideo, audioDevices, videoDevices, video });
     return () => friendID && startCall(true, friendID, config);
   };
 
@@ -24,9 +54,10 @@ function MainWindow({ startCall, clientId }) {
 
   const list = async () => {
     const listDevices = await navigator.mediaDevices.enumerateDevices();
-
+    console.log(JSON.stringify(listDevices, null, 2));
     const videoDevicesList = listDevices.filter((device) => device.kind === 'videoinput');
     const audioDevicesList = listDevices.filter((device) => device.kind === 'audioinput');
+
     setAudioDevice(audioDevicesList);
     setVideoDevice(videoDevicesList);
     setLoader(false);
@@ -44,12 +75,12 @@ function MainWindow({ startCall, clientId }) {
 
 
   const getUserAudio = (event) => {
-    console.log(event.target.value);
     setUserAudio(event.target.value);
   };
 
   const getUserVideo = (event) => {
-
+    console.log(event.target);
+    setUserVideo(event.target.value);
   };
 
   const videoSelector = videoDevices.length
@@ -60,6 +91,7 @@ function MainWindow({ startCall, clientId }) {
           color: 'black'
         }
       }
+        value={userVideo}
         onChange={(event) => getUserVideo(event)}
       >
         {videoDevices.map((item) => <option>{item.label}</option>)}

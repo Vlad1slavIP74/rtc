@@ -9,7 +9,7 @@ class MediaDevice extends Emitter {
    * Start media devices and send stream
    */
   start(config) {
-    console.log({ config });
+    console.log('MediaDevice', { config });
     // const constraints = {
     //   video: {
     //     facingMode: 'user',
@@ -27,21 +27,24 @@ class MediaDevice extends Emitter {
 
 
     navigator.mediaDevices.enumerateDevices()
-      .then((info) => {
-        console.log('enumerateDevices', JSON.stringify(info, null, 3));
+      .then(() => {
+        // console.log('enumerateDevices', JSON.stringify(info, null, 3));
 
-        const constraints = {};
+        // const constraints = {};
+        // const isCameraExist = !!info.find((deviceInfo) => deviceInfo.kind === 'videoinput');
+        // constraints.audio = true;
+        // constraints.video = isCameraExist ? {
+        //   facingMode: 'user',
+        //   height: { min: 360, ideal: 720, max: 1080 }
+        // } : false;
 
-        constraints.audio = true;
-        constraints.video = !!info.find((deviceInfo) => deviceInfo.kind === 'videoinput');
-
-        console.log(constraints);
+        // console.log(constraints);
 
         navigator.mediaDevices
-          .getUserMedia(constraints)
+          .getUserMedia(config)
           .then((stream) => {
             this.stream = stream;
-            console.log(this.stream);
+            // console.log(this.stream);
             this.emit('stream', stream);
           })
           .catch((err) => {
