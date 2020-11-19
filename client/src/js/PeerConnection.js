@@ -33,13 +33,28 @@ class PeerConnection extends Emitter {
      * @param {String} friendID - ID of the friend you want to call.
      *  @param {String} roomID
      */
-  constructor(friendID, roomID) {
+  constructor({ friendID, roomID }) {
     super();
     this.pc = new RTCPeerConnection(PC_CONFIG);
-    this.pc.onicecandidate = (event) => socket.emit('call', {
-      to: this.friendID,
-      candidate: event.candidate
-    });
+    // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/onicecandidate
+    this.pc.onicecandidate = (event) => {
+      console.log('onicecandidate', friendID, roomID);
+
+      if (friendID) {
+        socket.emit('call', {
+          to: this.friendID,
+          candidate: event.candidate
+        });
+      } else {
+        console.log('BBBBBjoinRoomBBBBB', event.candidate);
+
+        socket.emit('joinRoom', {
+          f: 3,
+          candidate: event.candidate,
+          to: roomID
+        });
+      }
+    };
     this.pc.ontrack = (event) => this.emit('peerStream', event.streams[0]);
 
     this.mediaDevice = new MediaDevice();
@@ -95,6 +110,7 @@ class PeerConnection extends Emitter {
    * @param {String} clientId
    */
   joinRoomPeer({ roomID, config, clientId }) {
+    this.guestId = clientId;
     this.mediaDevice
       .on('stream', (stream) => {
         stream.getTracks().forEach((track) => {
@@ -132,7 +148,6 @@ class PeerConnection extends Emitter {
   }
 
   joinRoomOffer() {
-    console.log(44444);
     this.pc.createOffer()
       .then(this.getUserRoomDescription.bind(this))
       .catch((err) => console.log(err));
@@ -146,13 +161,21 @@ class PeerConnection extends Emitter {
     return this;
   }
 
+  createAnswerRoom() {
+    this.pc.createAnswer()
+      .then(this.getUserRoomDescription.bind(this))
+      .catch((err) => console.log(err));
+    return this;
+  }
+
   getUserRoomDescription(desc) {
     this.pc.setLocalDescription(desc);
-    socket.emit('joinRoom', { to: this.roomID, sdp: desc });
+    socket.emit('joinRoom', { to: this.roomID, sdp: desc, guestId: this.guestId });
     return this;
   }
 
   getDescription(desc) {
+    console.log(this.guestId);
     this.pc.setLocalDescription(desc);
     socket.emit('call', { to: this.friendID, sdp: desc });
     return this;

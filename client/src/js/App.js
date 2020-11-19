@@ -49,13 +49,23 @@ class App extends Component {
           this.pc.addIceCandidate(data.candidate);
         }
       })
+      .on('joinRoom', (data) => {
+        console.log('AAAAAAAA sjoinRoom', data);
+        if (data.sdp) {
+          this.pc.setRemoteDescription(data.sdp);
+          if (data.sdp.type === 'offer') this.pc.createAnswerRoom();
+        } else {
+          console.log(7777777, data);
+          this.pc.addIceCandidate(data.candidate);
+        }
+      })
       .on('end', this.endCall.bind(this, false))
       .emit('init');
   }
 
   startCall(isCaller, friendID, config) {
     this.config = config;
-    this.pc = new PeerConnection(friendID)
+    this.pc = new PeerConnection({ friendID })
       .on('localStream', (src) => {
         const newState = { callWindow: 'active', localSrc: src };
         if (!isCaller) newState.callModal = '';
@@ -70,7 +80,7 @@ class App extends Component {
     this.config = config;
     console.log('createRoom', config);
     // bad way but fast
-    this.pc = new PeerConnection(_, roomID)
+    this.pc = new PeerConnection({ roomID })
       .on('localStream', (src) => {
         const newState = { callWindow: 'active', localSrc: src };
         newState.callModal = '';
@@ -82,8 +92,7 @@ class App extends Component {
 
   joinChat({ roomID, config, clientId }) {
     this.config = config;
-    console.log('joinChat', roomID);
-    this.pc = new PeerConnection(_, roomID)
+    this.pc = new PeerConnection({ roomID })
       .on('localStream', (src) => {
         const newState = { callWindow: 'active', localSrc: src };
         newState.callModal = '';

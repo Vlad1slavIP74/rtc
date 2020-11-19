@@ -27,6 +27,9 @@ function initSocket(socket) {
     .on('call', (data) => {
       const receiver = users.get(data.to);
       if (receiver) {
+        if (data.candidate) {
+          console.log(444);
+        }
         console.log('call', { ...data, from: id });
         receiver.emit('call', { ...data, from: id });
       } else {
@@ -46,8 +49,6 @@ function initSocket(socket) {
     })
 
     .on('createRoom', (data) => {
-      console.log(6666);
-
       const result = rooms.createRoom(data.roomID, socket, data.clientId);
 
       if (result) {
@@ -58,10 +59,27 @@ function initSocket(socket) {
 
     .on('joinRoom', (data) => {
       const room = rooms.getRoomById(data.to);
-      console.log(7777, room.guests);
+
+      console.log(2);
+      if (data.candidate) {
+        console.log('\ncandidate\n', data);
+      }
+
       if (room) {
-        rooms.joinRoom(data.to, socket);
-        console.log(888, room.guests);
+        rooms.joinRoom(data.to, socket, data.guestId);
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const guest of room.guests) {
+          if (guest.guestId === id) continue;
+          const { socket: guestSocket } = guest;
+          guestSocket.emit('joinRoom', {
+            ...data,
+            from: id,
+            roomRequest: true,
+            to: guest.guestId
+            // to:
+          });
+        }
       }
     });
 }

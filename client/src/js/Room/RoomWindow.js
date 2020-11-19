@@ -26,7 +26,7 @@ function getConfig({ userAudio, userVideo, audioDevices, videoDevices, video }) 
   };
 }
 
-function MainWindow({ createRoom, clientId, joinChat }) {
+function RoomWindow({ createRoom, clientId, joinChat }) {
   const [roomID, setRoomID] = useState(null);
   const [audioDevices, setAudioDevice] = useState([]);
   const [videoDevices, setVideoDevice] = useState([]);
@@ -43,7 +43,7 @@ function MainWindow({ createRoom, clientId, joinChat }) {
   const callWithVideo = (video) => {
     // { video: { deviceId: myPreferredCameraDeviceId } }
 
-    console.log('MainWindow', { userAudio, userVideo });
+    console.log('RoomWindow', { userAudio, userVideo });
 
 
     const config = getConfig({ userAudio, userVideo, audioDevices, videoDevices, video });
@@ -154,7 +154,7 @@ function MainWindow({ createRoom, clientId, joinChat }) {
           <button
             type="button"
             className="btn-action fa fa-meetup"
-            onClick={joinChatWithVideo(false)}
+            onClick={joinChatWithVideo(true)}
           />
           {videoSelector}
           {audioSelector}
@@ -164,10 +164,10 @@ function MainWindow({ createRoom, clientId, joinChat }) {
   );
 }
 
-MainWindow.propTypes = {
+RoomWindow.propTypes = {
   clientId: PropTypes.string.isRequired,
   joinChat: PropTypes.func.isRequired,
   createRoom: PropTypes.func.isRequired
 };
 
-export default MainWindow;
+export default RoomWindow;
