@@ -22,4 +22,4 @@ exports.create = async (socket) => {
 exports.get = (id) => users[id];
 
 exports.remove = (id) => delete users[id];
-exports.getAll = () => Object.keys(users)
+exports.getAll = () => Object.keys(users);

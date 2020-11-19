@@ -5,6 +5,7 @@ import PeerConnection from './PeerConnection';
 import MainWindow from './MainWindow';
 import CallWindow from './CallWindow';
 import CallModal from './CallModal';
+import RoomWindow from './Room/RoomWindow';
 import '@babel/polyfill';
 
 class App extends Component {
@@ -25,6 +26,8 @@ class App extends Component {
     this.startCallHandler = this.startCall.bind(this);
     this.endCallHandler = this.endCall.bind(this);
     this.rejectCallHandler = this.rejectCall.bind(this);
+    this.createRoomHandler = this.createRoom.bind(this);
+    this.joinChatHandler = this.joinChat.bind(this);
   }
 
   componentDidMount() {
@@ -42,7 +45,9 @@ class App extends Component {
         if (data.sdp) {
           this.pc.setRemoteDescription(data.sdp);
           if (data.sdp.type === 'offer') this.pc.createAnswer();
-        } else this.pc.addIceCandidate(data.candidate);
+        } else {
+          this.pc.addIceCandidate(data.candidate);
+        }
       })
       .on('end', this.endCall.bind(this, false))
       .emit('init');
@@ -59,6 +64,33 @@ class App extends Component {
       .on('peerStream', (src) => this.setState({ peerSrc: src }))
 
       .start(isCaller, config);
+  }
+
+  createRoom({ roomID, config, clientId }) {
+    this.config = config;
+    console.log('createRoom', config);
+    // bad way but fast
+    this.pc = new PeerConnection(_, roomID)
+      .on('localStream', (src) => {
+        const newState = { callWindow: 'active', localSrc: src };
+        newState.callModal = '';
+        this.setState(newState);
+      })
+      .on('peerStream', (src) => this.setState({ peerSrc: src }))
+      .createRoomPeer({ roomID, config, clientId });
+  }
+
+  joinChat({ roomID, config, clientId }) {
+    this.config = config;
+    console.log('joinChat', roomID);
+    this.pc = new PeerConnection(_, roomID)
+      .on('localStream', (src) => {
+        const newState = { callWindow: 'active', localSrc: src };
+        newState.callModal = '';
+        this.setState(newState);
+      })
+      .on('peerStream', (src) => this.setState({ peerSrc: src }))
+      .joinRoomPeer({ roomID, config, clientId });
   }
 
   rejectCall() {
@@ -87,20 +119,20 @@ class App extends Component {
 
     return (
       <div>
-        <MainWindow
-          clientId={clientId}
-          startCall={this.startCallHandler}
-        />
-        {/* <div>
-          <select value={this.state.valueFromSelect} onChange={this.handleSelect}>
-            <option value='a'>
-              a
-            </option>
-            <option value='b'>
-              b
-            </option>
-          </select>
-        </div> */}
+        <div className="WindowsContainer">
+
+          <MainWindow
+            clientId={clientId}
+            startCall={this.startCallHandler}
+          />
+          <RoomWindow
+            clientId={clientId}
+            createRoom={this.createRoomHandler}
+            joinChat={this.joinChatHandler}
+          />
+
+        </div>
+
         {!_.isEmpty(this.config) && (
           <CallWindow
             status={callWindow}

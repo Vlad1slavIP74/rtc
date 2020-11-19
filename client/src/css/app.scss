@@ -40,6 +40,10 @@ body {
   border: none;
 }
 
+.WindowsContainer {
+  display: flex;
+  flex-direction: row;
+}
 
 @import "main-window";
 @import "call-window";

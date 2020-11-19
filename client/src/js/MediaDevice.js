@@ -10,36 +10,9 @@ class MediaDevice extends Emitter {
    */
   start(config) {
     console.log('MediaDevice', { config });
-    // const constraints = {
-    //   video: {
-    //     facingMode: 'user',
-    //     height: { min: 360, ideal: 720, max: 1080 }
-    //   },
-    //   audio: true
-    // };
-
-
-    // for PC without video
-    // const constraints = {
-    //   audio: true,
-    //   video: false
-    // };
-
 
     navigator.mediaDevices.enumerateDevices()
       .then(() => {
-        // console.log('enumerateDevices', JSON.stringify(info, null, 3));
-
-        // const constraints = {};
-        // const isCameraExist = !!info.find((deviceInfo) => deviceInfo.kind === 'videoinput');
-        // constraints.audio = true;
-        // constraints.video = isCameraExist ? {
-        //   facingMode: 'user',
-        //   height: { min: 360, ideal: 720, max: 1080 }
-        // } : false;
-
-        // console.log(constraints);
-
         navigator.mediaDevices
           .getUserMedia(config)
           .then((stream) => {
@@ -59,23 +32,6 @@ class MediaDevice extends Emitter {
       .catch((errorCallback) => {
         console.log(errorCallback);
       });
-
-
-    // navigator.mediaDevices
-    //   .getUserMedia(constraints)
-    //   .then((stream) => {
-    //     this.stream = stream;
-    //     console.log(this.stream);
-    //     this.emit('stream', stream);
-    //   })
-    //   .catch((err) => {
-    //     if (err instanceof DOMException) {
-    //       console.log(err);
-    //       alert('Cannot open webcam and/or microphone');
-    //     } else {
-    //       console.log(err);
-    //     }
-    //   });
 
     return this;
   }

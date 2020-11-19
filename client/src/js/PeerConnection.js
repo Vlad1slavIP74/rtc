@@ -17,6 +17,12 @@ const PC_CONFIG = { iceServers: [
     urls: 'turn:3.14.69.99:3478',
     credential: 'bmcpassword',
     username: 'bmc'
+  },
+  {
+    urls: 'turn:3.134.101.246:3478',
+    credential: 'bmcpassword',
+    username: 'bmc'
+
   }
 
 ] };
@@ -25,8 +31,9 @@ class PeerConnection extends Emitter {
   /**
      * Create a PeerConnection.
      * @param {String} friendID - ID of the friend you want to call.
+     *  @param {String} roomID
      */
-  constructor(friendID) {
+  constructor(friendID, roomID) {
     super();
     this.pc = new RTCPeerConnection(PC_CONFIG);
     this.pc.onicecandidate = (event) => socket.emit('call', {
@@ -37,6 +44,7 @@ class PeerConnection extends Emitter {
 
     this.mediaDevice = new MediaDevice();
     this.friendID = friendID;
+    this.roomID = roomID;
   }
 
   /**
@@ -47,12 +55,54 @@ class PeerConnection extends Emitter {
   start(isCaller, config) {
     this.mediaDevice
       .on('stream', (stream) => {
+        console.log(stream, stream.id, JSON.stringify(stream, null, 2));
         stream.getTracks().forEach((track) => {
           this.pc.addTrack(track, stream);
         });
         this.emit('localStream', stream);
         if (isCaller) socket.emit('request', { to: this.friendID });
         else this.createOffer();
+      })
+      .start(config);
+
+    return this;
+  }
+
+  /**
+   *
+   * @param {String} roomID
+   * @param {Object} config
+   * @param {String} clientId
+   */
+  createRoomPeer({ roomID, config, clientId }) {
+    this.mediaDevice
+      .on('stream', (stream) => {
+        stream.getTracks().forEach((track) => {
+          this.pc.addTrack(track, stream);
+        });
+        this.emit('localStream', stream);
+        socket.emit('createRoom', { roomID, clientId });
+      })
+      .start(config);
+
+    return this;
+  }
+
+  /**
+   *
+   * @param {String} roomID
+   * @param {Object} config
+   * @param {String} clientId
+   */
+  joinRoomPeer({ roomID, config, clientId }) {
+    this.mediaDevice
+      .on('stream', (stream) => {
+        stream.getTracks().forEach((track) => {
+          this.pc.addTrack(track, stream);
+        });
+        this.emit('localStream', stream);
+        this.joinRoomOffer();
+        // socket.emit('createRoom', { roomID, clientId });
       })
       .start(config);
 
@@ -81,10 +131,24 @@ class PeerConnection extends Emitter {
     return this;
   }
 
+  joinRoomOffer() {
+    console.log(44444);
+    this.pc.createOffer()
+      .then(this.getUserRoomDescription.bind(this))
+      .catch((err) => console.log(err));
+    return this;
+  }
+
   createAnswer() {
     this.pc.createAnswer()
       .then(this.getDescription.bind(this))
       .catch((err) => console.log(err));
+    return this;
+  }
+
+  getUserRoomDescription(desc) {
+    this.pc.setLocalDescription(desc);
+    socket.emit('joinRoom', { to: this.roomID, sdp: desc });
     return this;
   }
 

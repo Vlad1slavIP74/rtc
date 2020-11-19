@@ -1,6 +1,7 @@
 const io = require('socket.io');
+const { compact } = require('lodash');
 const users = require('./users');
-
+const rooms = require('./rooms');
 /**
  * Initialize when a connection is made
  * @param {SocketIO.Socket} socket
@@ -33,6 +34,7 @@ function initSocket(socket) {
       }
     })
     .on('end', (data) => {
+      // add logic work with room
       const receiver = users.get(data.to);
       if (receiver) {
         receiver.emit('end');
@@ -41,6 +43,26 @@ function initSocket(socket) {
     .on('disconnect', () => {
       users.remove(id);
       console.log(id, 'disconnected');
+    })
+
+    .on('createRoom', (data) => {
+      console.log(6666);
+
+      const result = rooms.createRoom(data.roomID, socket, data.clientId);
+
+      if (result) {
+        socket.emit('failed');
+      }
+      console.log(rooms.getRoomById(data.roomID));
+    })
+
+    .on('joinRoom', (data) => {
+      const room = rooms.getRoomById(data.to);
+      console.log(7777, room.guests);
+      if (room) {
+        rooms.joinRoom(data.to, socket);
+        console.log(888, room.guests);
+      }
     });
 }
 
