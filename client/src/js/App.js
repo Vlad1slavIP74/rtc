@@ -50,7 +50,7 @@ class App extends Component {
         }
       })
       .on('joinRoom', (data) => {
-        console.log('AAAAAAAA sjoinRoom', data);
+        console.log('AAAAAAA sjoinRoom', data);
         if (data.sdp) {
           this.pc.setRemoteDescription(data.sdp);
           if (data.sdp.type === 'offer') this.pc.createAnswerRoom();
@@ -58,6 +58,11 @@ class App extends Component {
           console.log(7777777, data);
           this.pc.addIceCandidate(data.candidate);
         }
+      })
+      .on('callRoom', (data) => {
+        // if (data.from !== this.state.clientId) {
+        this.pc.addIceCandidate(data.candidate);
+        // }
       })
       .on('end', this.endCall.bind(this, false))
       .emit('init');

@@ -81,6 +81,25 @@ function initSocket(socket) {
           });
         }
       }
+    })
+
+    .on('callRoom', (data) => {
+      const room = rooms.getRoomById(data.to);
+
+      if (room) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const guest of room.guests) {
+          if (guest.guestId === id) continue;
+          const { socket: guestSocket } = guest;
+          guestSocket.emit('joinRoom', {
+            ...data,
+            from: id,
+            roomRequest: true,
+            to: guest.guestId
+            // to:
+          });
+        }
+      }
     });
 }
 

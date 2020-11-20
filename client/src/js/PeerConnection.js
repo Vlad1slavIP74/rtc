@@ -46,12 +46,18 @@ class PeerConnection extends Emitter {
           candidate: event.candidate
         });
       } else {
-        console.log('BBBBBjoinRoomBBBBB', event.candidate);
+        // console.log('BBBBBjoinRoomBBBBB', event.candidate);
 
-        socket.emit('joinRoom', {
-          f: 3,
+        // socket.emit('joinRoom', {
+        //   f: 3,
+        //   candidate: event.candidate,
+        //   to: roomID
+        // });
+
+        socket.emit('callRoom', {
           candidate: event.candidate,
-          to: roomID
+          to: roomID,
+          from: this.guestId
         });
       }
     };
